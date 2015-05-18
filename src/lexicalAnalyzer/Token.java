@@ -1,19 +1,20 @@
 package lexicalAnalyzer;
 
-import java.util.Map;
+import enums.myEnum;
 
 public class Token {
 
-	private Type type;
+	private myEnum type;
 	private String value;
+	int line;
 	//private int currentTokenIndex;
 	
-	public Token(Type type, String value){
+	public Token(myEnum type, String value, int line){
 		this.type = type;
 		this.value = value;
-		//this.currentTokenIndex = 0;
+		this.line  = line;
 	}
-	
+
 	public void printToken(){
 		System.out.println("[" + type + "," + value + "]");
 	}
