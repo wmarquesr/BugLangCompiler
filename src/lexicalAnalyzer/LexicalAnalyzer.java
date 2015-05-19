@@ -17,8 +17,8 @@ import enums.Type;
 public class LexicalAnalyzer {
 
 	List<Token> tokenList;
-	public BufferedReader br;
-	public int line = 0;
+	BufferedReader br;
+	int line = 0;
 	int row = 0;
 	List<String> currentLine;
 
@@ -202,21 +202,6 @@ public class LexicalAnalyzer {
 		}
 
 		return news;
-	}
-	
-	private void printList(List<String> currentLine2){
-		for (int i = 0; i < currentLine2.size(); i++) {
-			System.out.println(currentLine2.get(i));
-		}
-	}
-	
-	private LinkedList<String> convertListToLinkedList(List<String> list){
-		LinkedList<String> ll = new LinkedList<String>();
-		for (int i = 0; i < list.size(); i++) {
-			ll.add(list.get(i));
-		}
-		
-		return ll;
 	}
 
 }

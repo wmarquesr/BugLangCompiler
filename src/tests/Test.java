@@ -12,11 +12,6 @@ public class Test {
 		
 		LexicalAnalyzer lex = new LexicalAnalyzer(file);
 		
-		int index = 7;
-		for (int i = 0; i < index; i++) {
-			lex.nextToken().printToken();
-			System.out.println(lex.line);
-		}
 		
 	}
 
