@@ -155,7 +155,7 @@ public class LexicalAnalyzer {
 						break;
 					}
 				} catch(NumberFormatException e) {
-					thisToken = new Token(Type.ERROR, tk, line);
+					thisToken = new Token(Type.ERROR, "Cannot iniziatize variable with number!", line);
 					break;
 				}
 			}
@@ -163,6 +163,15 @@ public class LexicalAnalyzer {
 			if (tk.contains(":")) {
 				thisToken = new Token(Type.IDENTIFIER, tk, Integer.parseInt(tk.substring(tk.indexOf(":")+1)), line);
 				break;
+			}
+			if (tk.startsWith("\"")) {
+				if (tk.endsWith("\"")) {
+					thisToken = new Token(Literal.STINGLITERAL, tk, line);
+					break;
+				} else {
+					thisToken = new Token(Type.ERROR, "Quotation is not closed!", line);
+					break;
+				}
 			}
 			thisToken = new Token(Type.IDENTIFIER, tk, line);
 			break;
