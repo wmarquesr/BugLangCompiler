@@ -1,9 +1,10 @@
 package lexicalAnalyzer;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,48 +17,47 @@ import enums.Type;
 
 public class LexicalAnalyzer {
 
-	List<Token> tokenList;
-	BufferedReader br;
-	int line = 0;
-	int row = 0;
-	List<String> currentLine;
+	private List<Token> tokenList;
+	private List<String> currentFileLine;
+	private List<String> allFileLines;
+	private File sourceCode;
+	private int line = 0;	
 
-	public LexicalAnalyzer(String file) throws IOException{
+	public LexicalAnalyzer(File sourceCode) throws IOException{
 		this.tokenList = new LinkedList<Token>();
-		FileReader fr = new FileReader(file);
-		br = new BufferedReader(fr);
+		this.sourceCode = sourceCode;
+		this.currentFileLine = new LinkedList<String>();
+		this.allFileLines = new LinkedList<String>();
+
+		List<String> lines = Files.readAllLines(sourceCode.toPath(), StandardCharsets.UTF_8);
+		allFileLines = convertListToLinkedList(lines);
 	}
 
 	public Token nextToken(){
-		if (currentLine == null)
-			currentLine = new ArrayList<String>();
-		/*if (allLines.size() == 0) {
-			System.out.println("No more tokens");
-			return new Token(null, null);
-		} else {*/
-			if(currentLine.isEmpty()){			
-				try {
-					currentLine = convertArrayToList(br.readLine().split(" "));
-					row = 0;
-					++line;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 
-			Token thisToken = searchToken(currentLine.get(row));
-			++row;
-			return thisToken;
-		//}
+		if (allFileLines.size() == 0) {
+			return null;
+		}
+		if(currentFileLine.size() == 0){			
+			currentFileLine = convertArrayToList(allFileLines.get(0).split(" "));
+			allFileLines.remove(0);
+			line++;
+		}
+
+		Token thisToken = searchToken(cleanString(currentFileLine.get(0)));
+		currentFileLine.remove(0);
+
+		return thisToken;
+
 	}
 
 	private Token searchToken(String tk){
 		Token thisToken;
 
-		//Verify if tk is a valid token in Type
 		switch (tk) {
 		case "int":
 			thisToken = new Token(Type.INTTYPE, Type.INTTYPE.getType(), line);
+			tokenList.add(thisToken);
 			break;
 		case "float":
 			thisToken = new Token(Type.FLOATTYPE, Type.FLOATTYPE.getType(), line);
@@ -83,7 +83,7 @@ public class LexicalAnalyzer {
 			thisToken = new Token(AritOperator.DIVOPERATOR, AritOperator.DIVOPERATOR.getType(), line);
 			tokenList.add(thisToken);
 			break;
-		case "Â¬":
+		case "¬":
 			thisToken = new Token(LogicOperator.NEGOPERATOR, LogicOperator.NEGOPERATOR.getType(), line);
 			tokenList.add(thisToken);
 			break;
@@ -172,33 +172,81 @@ public class LexicalAnalyzer {
 			tokenList.add(thisToken);
 			break;
 		default:
-			if (idisnumber(tk)) {
-				thisToken = new Token(Type.ERROR, Type.ERROR.getType(), line);
-			break;	
+			if (isNumber(tk)) {
+				
+				if (tk.contains(".")) {
+					thisToken = new Token(Type.FLOATTYPE, tk, line);
+					tokenList.add(thisToken);
+					break;
+				} else {
+					thisToken = new Token(Type.INTTYPE, tk, line);
+					tokenList.add(thisToken);
+					break;
+				}
 			}
+			
+			if (tk.contains(":")) {
+				thisToken = new Token(Type.IDENTIFIER, tk, Integer.parseInt(tk.substring(tk.indexOf(":")+1)), line);
+				tokenList.add(thisToken);
+				break;
+			}
+			
 			thisToken = new Token(Type.IDENTIFIER, tk, line);
+			tokenList.add(thisToken);
 			break;
 		}
 
 		return thisToken;
 	}
-
-	private boolean idisnumber(String tk) {
-	if (tk.startsWith("1") || tk.startsWith("2") || tk.startsWith("3") 
-			|| tk.startsWith("4") || tk.startsWith("5") || tk.startsWith("6") 
-			|| tk.startsWith("7") || tk.startsWith("8") || tk.startsWith("9")
-			|| tk.startsWith("0")) {
-		return true;
-	}
 	
+	//Remove all blank spaces and tabulation.
+	private String cleanString(String str){
+		char[] c = str.toCharArray();
+		String newStr = "";
+		
+		for (int i = 0; i < c.length; i++) {
+			if (c[i] != ' ' && c[i] != '\t') {
+				newStr = newStr + c[i];
+			}
+		}
+		
+		return newStr;
+	}
+
+	private boolean isNumber(String tk) {
+		if (tk.startsWith("1") || tk.startsWith("2") || tk.startsWith("3") 
+				|| tk.startsWith("4") || tk.startsWith("5") || tk.startsWith("6") 
+				|| tk.startsWith("7") || tk.startsWith("8") || tk.startsWith("9")
+				|| tk.startsWith("0")) {
+			return true;
+		}
+
 		return false;
 	}
 	
+	public List<String> getAllFileLines(){
+		return allFileLines;
+	}
+	
+	public List<Token> getTokenList(){
+		return tokenList;
+	}
+
 	private LinkedList<String> convertArrayToList(String[] s){
 		LinkedList<String> news = new LinkedList<String>();
 
 		for (int i = 0; i < s.length; i++) {
 			news.add(s[i]);
+		}
+
+		return news;
+	}
+
+	private LinkedList<String> convertListToLinkedList(List<String> lines) {
+		LinkedList<String> news = new LinkedList<String>();
+
+		for (int i = 0; i < lines.size(); i++) {
+			news.add(lines.get(i));
 		}
 
 		return news;
