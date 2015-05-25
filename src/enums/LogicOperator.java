@@ -1,7 +1,7 @@
 package enums;
 
 public enum LogicOperator implements myEnum {
-	NEGOPERATOR("¬"),
+	NEGOPERATOR("Â¬"),
 	ANDOPERATOR("&"),
 	OROPERATOR("|");
 
