@@ -2,7 +2,8 @@ package enums;
 
 public enum Literal implements myEnum {
 	FLOATLITERAL("floatliteral"),
-	INTLITERAL("intliteral");
+	INTLITERAL("intliteral"),
+	STINGLITERAL("stringliteral");
 
 	private String type;
 	
