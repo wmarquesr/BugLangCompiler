@@ -1,15 +1,15 @@
 package lexicalAnalyzer;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import enums.AritOperator;
 import enums.Command;
+import enums.Literal;
 import enums.LogicOperator;
 import enums.RelOperator;
 import enums.Symbol;
@@ -17,24 +17,24 @@ import enums.Type;
 
 public class LexicalAnalyzer {
 
-	private List<Token> tokenList;
 	private List<String> currentFileLine;
 	private List<String> allFileLines;
-	private File sourceCode;
 	private int line = 0;	
 
-	public LexicalAnalyzer(File sourceCode) throws IOException{
-		this.tokenList = new LinkedList<Token>();
-		this.sourceCode = sourceCode;
-		this.currentFileLine = new LinkedList<String>();
-		this.allFileLines = new LinkedList<String>();
+	public LexicalAnalyzer(File sourceCode) {
+		this.currentFileLine = new ArrayList<String>();
+		this.allFileLines = new ArrayList<String>();
 
-		List<String> lines = Files.readAllLines(sourceCode.toPath(), StandardCharsets.UTF_8);
-		allFileLines = convertListToLinkedList(lines);
+		List<String> lines;
+		try {
+			lines = Files.readAllLines(sourceCode.toPath(), StandardCharsets.UTF_8);
+			allFileLines = convertListToLinkedList(lines);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public Token nextToken(){
-
+	public Token nextToken() {		
 		if (allFileLines.size() == 0) {
 			return null;
 		}
@@ -57,159 +57,131 @@ public class LexicalAnalyzer {
 		switch (tk) {
 		case "int":
 			thisToken = new Token(Type.INTTYPE, Type.INTTYPE.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "float":
 			thisToken = new Token(Type.FLOATTYPE, Type.FLOATTYPE.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "string":
 			thisToken = new Token(Type.STRINGTYPE, Type.STRINGTYPE.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "+":
 			thisToken = new Token(AritOperator.ADDOPERATOR, AritOperator.ADDOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "-":
 			thisToken = new Token(AritOperator.SUBOPERATOR, AritOperator.SUBOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "*":
 			thisToken = new Token(AritOperator.MULTOPERATOR, AritOperator.MULTOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "/":
 			thisToken = new Token(AritOperator.DIVOPERATOR, AritOperator.DIVOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
-		case "¬":
+		case "Â¬":
 			thisToken = new Token(LogicOperator.NEGOPERATOR, LogicOperator.NEGOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "&":
 			thisToken = new Token(LogicOperator.ANDOPERATOR, LogicOperator.ANDOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "|":
 			thisToken = new Token(LogicOperator.OROPERATOR, LogicOperator.OROPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "==":
 			thisToken = new Token(RelOperator.EQUALOPERATOR, RelOperator.EQUALOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "!=":
 			thisToken = new Token(RelOperator.NEQUALOPERATOR, RelOperator.NEQUALOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "<":
 			thisToken = new Token(RelOperator.LTOPERATOR, RelOperator.LTOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "<=":
 			thisToken = new Token(RelOperator.LTEOPERATOR, RelOperator.LTEOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case ">":
 			thisToken = new Token(RelOperator.GTOPERATOR, RelOperator.GTOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case ">=":
 			thisToken = new Token(RelOperator.GTEOPERATOR, RelOperator.GTEOPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "if":
 			thisToken = new Token(Command.IFCOMMAND, Command.IFCOMMAND.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "while":
 			thisToken = new Token(Command.WHILECOMMAND, Command.WHILECOMMAND.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "for":
 			thisToken = new Token(Command.FORCOMMAND, Command.FORCOMMAND.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "(":
 			thisToken = new Token(Symbol.OPENPARENTESIS, Symbol.OPENPARENTESIS.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case ")":
 			thisToken = new Token(Symbol.CLOSEPARENTESIS, Symbol.CLOSEPARENTESIS.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "{":
 			thisToken = new Token(Symbol.OPENBRACE, Symbol.OPENBRACE.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "}":
 			thisToken = new Token(Symbol.CLOSEBRACE, Symbol.CLOSEBRACE.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case ";":
 			thisToken = new Token(Symbol.SEMICOLON, Symbol.SEMICOLON.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case ":":
 			thisToken = new Token(Symbol.COLON, Symbol.COLON.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case ".":
 			thisToken = new Token(Symbol.DOT, Symbol.DOT.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case ",":
 			thisToken = new Token(Symbol.COMMA, Symbol.COMMA.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "\"":
 			thisToken = new Token(Symbol.QUOTATION, Symbol.QUOTATION.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		case "=":
 			thisToken = new Token(Symbol.ATROPERATOR, Symbol.ATROPERATOR.getType(), line);
-			tokenList.add(thisToken);
 			break;
 		default:
 			if (isNumber(tk)) {
-				
-				if (tk.contains(".")) {
-					thisToken = new Token(Type.FLOATTYPE, tk, line);
-					tokenList.add(thisToken);
-					break;
-				} else {
-					thisToken = new Token(Type.INTTYPE, tk, line);
-					tokenList.add(thisToken);
+				try {
+					if (tk.contains(".")) {
+						Float.parseFloat(tk);
+						thisToken = new Token(Literal.FLOATLITERAL, tk, line);
+						break;
+					} else {
+						Integer.parseInt(tk);
+						thisToken = new Token(Literal.INTLITERAL, tk, line);
+						break;
+					}
+				} catch(NumberFormatException e) {
+					thisToken = new Token(Type.ERROR, tk, line);
 					break;
 				}
 			}
-			
+
 			if (tk.contains(":")) {
 				thisToken = new Token(Type.IDENTIFIER, tk, Integer.parseInt(tk.substring(tk.indexOf(":")+1)), line);
-				tokenList.add(thisToken);
 				break;
 			}
-			
 			thisToken = new Token(Type.IDENTIFIER, tk, line);
-			tokenList.add(thisToken);
 			break;
 		}
 
 		return thisToken;
 	}
-	
+
 	//Remove all blank spaces and tabulation.
 	private String cleanString(String str){
 		char[] c = str.toCharArray();
 		String newStr = "";
-		
+
 		for (int i = 0; i < c.length; i++) {
 			if (c[i] != ' ' && c[i] != '\t') {
 				newStr = newStr + c[i];
 			}
 		}
-		
+
 		return newStr;
 	}
 
@@ -223,17 +195,9 @@ public class LexicalAnalyzer {
 
 		return false;
 	}
-	
-	public List<String> getAllFileLines(){
-		return allFileLines;
-	}
-	
-	public List<Token> getTokenList(){
-		return tokenList;
-	}
 
-	private LinkedList<String> convertArrayToList(String[] s){
-		LinkedList<String> news = new LinkedList<String>();
+	private List<String> convertArrayToList(String[] s){
+		List<String> news = new ArrayList<String>();
 
 		for (int i = 0; i < s.length; i++) {
 			news.add(s[i]);
@@ -242,8 +206,8 @@ public class LexicalAnalyzer {
 		return news;
 	}
 
-	private LinkedList<String> convertListToLinkedList(List<String> lines) {
-		LinkedList<String> news = new LinkedList<String>();
+	private List<String> convertListToLinkedList(List<String> lines) {
+		List<String> news = new ArrayList<String>();
 
 		for (int i = 0; i < lines.size(); i++) {
 			news.add(lines.get(i));
@@ -252,4 +216,7 @@ public class LexicalAnalyzer {
 		return news;
 	}
 
+	public int size() {
+		return allFileLines.size();
+	}
 }
