@@ -1,4 +1,4 @@
-# Created by https://www.gitignore.io
+# Created by https://www.gitignore.io/api/eclipse,gradle,java
 
 ### Eclipse ###
 *.pydevproject
@@ -28,6 +28,9 @@ local.properties
 
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+# Java annotation processor (APT)
+.factorypath
 
 # PDT-specific
 .buildpath
