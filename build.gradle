@@ -1,0 +1,29 @@
+apply plugin: "java"
+apply plugin: "eclipse"
+apply plugin: "application"
+
+mainClassName = "tests.Test"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+jar {
+    baseName = "buglangc"
+    version = "1.0"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile "junit:junit:4.12"
+}
+
+test {
+    systemProperties "property" : "value"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.5"
+}

@@ -21,19 +21,27 @@ public class LexicalAnalyzer {
 	private List<String> allFileLines;
 	private int line = 0;	
 
-	public LexicalAnalyzer(File sourceCode) {
+	/**
+	 * Take the file .bl on the path, divided per line and put it on a list. 
+	 * @param path Path to file .el
+	 */
+	public LexicalAnalyzer(File path) {
 		this.currentFileLine = new ArrayList<String>();
 		this.allFileLines = new ArrayList<String>();
 
 		List<String> lines;
 		try {
-			lines = Files.readAllLines(sourceCode.toPath(), StandardCharsets.UTF_8);
+			lines = Files.readAllLines(path.toPath(), StandardCharsets.UTF_8);
 			allFileLines = convertListToLinkedList(lines);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Return a token in the list of tokens.
+	 * @return The next token of the list
+	 */
 	public Token nextToken() {		
 		if (allFileLines.size() == 0) {
 			return null;
@@ -225,6 +233,10 @@ public class LexicalAnalyzer {
 		return news;
 	}
 
+	/**
+	 * 
+	 * @return The quantity of lines on the file .el
+	 */
 	public int size() {
 		return allFileLines.size();
 	}
