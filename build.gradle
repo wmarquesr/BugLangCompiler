@@ -2,7 +2,7 @@ apply plugin: "java"
 apply plugin: "eclipse"
 apply plugin: "application"
 
-mainClassName = "tests.Test"
+mainClassName = "lexicalAnalyzer.LexicalAnalyzer"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -16,12 +16,46 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    main {
+        java {
+            srcDir "src/main/java"
+        }
+        resources {
+                  srcDir "src/main/res"
+        }
+    }
+
+    test {
+         java {
+              srcDir "src/test/java"
+         }
+         resources {
+                  srcDir "src/test/res"
+         }
+    }
+}
+
 dependencies {
     testCompile "junit:junit:4.12"
 }
 
 test {
     systemProperties "property" : "value"
+    testLogging.showStandardStreams=true
+
+    minHeapSize = "128m"
+    maxHeapSize="512m"
+
+    jvmArgs "-XX:MaxPermSize256m"
+
+    beforeTest { descriptor ->
+     logger.lifecycle("Running test: " + descriptor)
+               }
+
+    onOutput { descriptor, event ->
+               logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+             }
 }
 
 task wrapper(type: Wrapper) {
