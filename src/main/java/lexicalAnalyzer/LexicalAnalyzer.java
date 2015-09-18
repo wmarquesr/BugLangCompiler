@@ -2,6 +2,8 @@ package lexicalAnalyzer;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -241,17 +243,18 @@ public class LexicalAnalyzer {
 		return allFileLines.size();
 	}
 	
-public static void main(String[] args) throws IOException {
+public static void main(String[] args) {
+	URI uri;
+	try {
+		uri = ClassLoader.getSystemResource("ShellSort.bl").toURI();
+		LexicalAnalyzer la = new LexicalAnalyzer(new File(uri));
 		
-		String path = new File("").getCanonicalPath();
-		path+= "src/res/ShellSort.bl";
-		File file = new File(path);
-		
-		LexicalAnalyzer lex = new LexicalAnalyzer(file);
-		
-		while(lex.size() != 0){
-			lex.nextToken().printToken();
-			
-		}
+		while(la.size() != 0)	
+			System.out.println(la.nextToken().toString());
+	} catch (URISyntaxException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 	}
+		
+	}	
 }

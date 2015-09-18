@@ -22,11 +22,12 @@ public class Token {
 		this.line  = line;
 	}
 
-	public void printToken(){
+	@Override
+	public String toString(){
 		if (arraySize == -1) {
-			System.out.println("[ " + type + " , " + value + " , " + line + " ]");
+			return ("[ " + type + " , " + value + " , " + line + " ]");
 		} else {
-			System.out.println("[ " + type + " , " + value + " , " + arraySize + " , " + line + " ]");
+			return ("[ " + type + " , " + value + " , " + arraySize + " , " + line + " ]");
 		}
 		
 	}
