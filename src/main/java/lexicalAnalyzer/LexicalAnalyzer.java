@@ -240,4 +240,18 @@ public class LexicalAnalyzer {
 	public int size() {
 		return allFileLines.size();
 	}
+	
+public static void main(String[] args) throws IOException {
+		
+		String path = new File("").getCanonicalPath();
+		path+= "src/res/ShellSort.bl";
+		File file = new File(path);
+		
+		LexicalAnalyzer lex = new LexicalAnalyzer(file);
+		
+		while(lex.size() != 0){
+			lex.nextToken().printToken();
+			
+		}
+	}
 }
