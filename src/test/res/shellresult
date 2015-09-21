@@ -138,7 +138,7 @@
 [ SEMICOLON , ; , 23 ]
 [ CLOSEBRACE , } , 24 ]
 [ CLOSEBRACE , } , 25 ]
-[ RETURNOPERATOR , return , 26 ]
+[ RETURNCOMMAND , return , 26 ]
 [ INTLITERAL , 1 , 26 ]
 [ SEMICOLON , ; , 26 ]
 [ CLOSEBRACE , } , 27 ]

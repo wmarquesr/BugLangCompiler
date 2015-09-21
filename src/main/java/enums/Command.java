@@ -4,6 +4,7 @@ public enum Command implements myEnum {
 
 	WHILECOMMAND("while"),
 	FORCOMMAND("for"),
+	RETURNCOMMAND("return"),
 	IFCOMMAND("if");
 	
 	private String type;

@@ -122,6 +122,9 @@ public class LexicalAnalyzer {
 		case "for":
 			thisToken = new Token(Command.FORCOMMAND, Command.FORCOMMAND.getType(), line);
 			break;
+		case "return": {
+			thisToken = new Token(Command.RETURNCOMMAND, Command.RETURNCOMMAND.getType(), line);
+		} break;
 		case "(":
 			thisToken = new Token(Symbol.OPENPARENTESIS, Symbol.OPENPARENTESIS.getType(), line);
 			break;
