@@ -8,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import enums.AritOperator;
 import enums.Command;
@@ -48,8 +50,8 @@ public class LexicalAnalyzer {
 		if (allFileLines.size() == 0) {
 			return null;
 		}
-		if(currentFileLine.size() == 0){			
-			currentFileLine = convertArrayToList(allFileLines.get(0).split(" "));
+		if(currentFileLine.size() == 0){
+			currentFileLine = convertArrayToList(removeWhitespace(allFileLines.get(0)).split("\\s"));
 			allFileLines.remove(0);
 			line++;
 		}
@@ -199,7 +201,7 @@ public class LexicalAnalyzer {
 		String newStr = "";
 
 		for (int i = 0; i < c.length; i++) {
-			if (c[i] != ' ' && c[i] != '\t') {
+			if (c[i] != ' ' && c[i] != '\t' && c[i] != '\n') {
 				newStr = newStr + c[i];
 			}
 		}
@@ -244,6 +246,12 @@ public class LexicalAnalyzer {
 	 */
 	public int size() {
 		return allFileLines.size();
+	}
+	
+	private String removeWhitespace(String s) {
+		Pattern replace = Pattern.compile("\\s+");
+		Matcher rm = replace.matcher(s.trim());
+		return rm.replaceAll(" ");
 	}
 	
 public static void main(String[] args) {

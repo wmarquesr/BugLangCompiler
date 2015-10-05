@@ -44,7 +44,6 @@
 [ GTOPERATOR , > , 11 ]
 [ INTLITERAL , 1 , 11 ]
 [ CLOSEPARENTESIS , ) , 11 ]
-[ IDENTIFIER ,  , 11 ]
 [ OPENBRACE , { , 11 ]
 [ IDENTIFIER , gap , 12 ]
 [ ATROPERATOR , = , 12 ]
