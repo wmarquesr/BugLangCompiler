@@ -1,0 +1,5 @@
+[ INTTYPE , int , 1 ]
+[ IDENTIFIER , al2 , 1 ]
+[ ATROPERATOR , = , 1 ]
+[ STRINGLITERAL , 24gs, 1 ]
+[ SEMICOLON , ; , 1 ]

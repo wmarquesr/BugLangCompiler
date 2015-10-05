@@ -36,4 +36,25 @@ public class BuglangTests {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testSample1() {
+		try {
+			URI source = ClassLoader.getSystemResource("sample1.bl").toURI();
+			LexicalAnalyzer la = new LexicalAnalyzer(new File(source));
+			
+			URI sourceRes = ClassLoader.getSystemResource("sample1").toURI();
+			BufferedReader res = new BufferedReader(new FileReader(sourceRes.getPath()));
+			
+			String line = res.readLine();
+			while (la.size() != 0) {
+				assertEquals(line, la.nextToken().toString());
+				line = res.readLine();
+			}
+			
+			res.close();
+		} catch (URISyntaxException | IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

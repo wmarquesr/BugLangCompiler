@@ -47,16 +47,16 @@ public class LexicalAnalyzer {
 	 * @return The next token of the list
 	 */
 	public Token nextToken() {		
-		if (allFileLines.size() == 0) {
+		if (allFileLines.size() == 0)
 			return null;
-		}
+		
 		if(currentFileLine.size() == 0){
 			currentFileLine = convertArrayToList(removeWhitespace(allFileLines.get(0)).split("\\s"));
 			allFileLines.remove(0);
 			line++;
 		}
 
-		Token thisToken = searchToken(cleanString(currentFileLine.get(0)));
+		Token thisToken = searchToken(currentFileLine.get(0));
 		currentFileLine.remove(0);
 
 		return thisToken;
@@ -193,20 +193,6 @@ public class LexicalAnalyzer {
 		}
 
 		return thisToken;
-	}
-
-	//Remove all blank spaces and tabulation.
-	private String cleanString(String str){
-		char[] c = str.toCharArray();
-		String newStr = "";
-
-		for (int i = 0; i < c.length; i++) {
-			if (c[i] != ' ' && c[i] != '\t' && c[i] != '\n') {
-				newStr = newStr + c[i];
-			}
-		}
-
-		return newStr;
 	}
 
 	private boolean isNumber(String tk) {
