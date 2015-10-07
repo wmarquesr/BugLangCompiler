@@ -7,8 +7,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import enums.AritOperator;
 import enums.Command;
@@ -20,9 +18,9 @@ import enums.Type;
 
 public class LexicalAnalyzer {
 
-	private List<String> currentFileLine;
-	private int line = 0;	
+	private int line = 1;	
 	private Scanner scanner;
+	private Scanner tokenScanner;
 	
 	final private String regex = AritOperator.regex() + "|" + Command.regex() + "|" + Literal.regex() + "|" +
 				LogicOperator.regex() + "|" + RelOperator.regex() + "|" + Symbol.regex() + "|" + Type.regex();
@@ -33,28 +31,24 @@ public class LexicalAnalyzer {
 	 * @throws FileNotFoundException if source is not found
 	 */
 	public LexicalAnalyzer(URI uri) throws FileNotFoundException {
-		this.currentFileLine = new ArrayList<String>();
 		scanner = new Scanner(new File(uri));
+		if (scanner.hasNextLine())
+			tokenScanner = new Scanner(scanner.nextLine());
 	}
 
 	/**
 	 * Return a token in the list of tokens.
 	 * @return The next token of the list
 	 */
-	public Token nextToken() {		
-		if (!scanner.hasNextLine())
-			return null;
-		
-		if(currentFileLine.size() == 0){
-			currentFileLine = convertArrayToList(removeWhitespace(scanner.nextLine()).split("\\s"));
-			line++;
+	public Token nextToken() {
+		if(!tokenScanner.hasNext()){
+			tokenScanner = new Scanner(scanner.nextLine());
+			++line;
 		}
 
-		Token token = searchToken(currentFileLine.get(0));
-		currentFileLine.remove(0);
+		Token token = searchToken(tokenScanner.next());
 		
 		return token;
-
 	}
 	
 	private Token searchToken(String lex) {
@@ -78,28 +72,12 @@ public class LexicalAnalyzer {
 		return token;
 	}
 
-	private List<String> convertArrayToList(String[] s){
-		List<String> news = new ArrayList<String>();
-
-		for (int i = 0; i < s.length; i++) {
-			news.add(s[i]);
-		}
-
-		return news;
-	}
-
 	/**
 	 * 
-	 * @return The quantity of lines on the file .el
+	 * @return true if there is tokens remaining to be consumed.
 	 */
 	public boolean hasNext() {
 		return scanner.hasNext();
-	}
-	
-	private String removeWhitespace(String s) {
-		Pattern replace = Pattern.compile("\\s+");
-		Matcher rm = replace.matcher(s.trim());
-		return rm.replaceAll(" ");
 	}
 	
 	/**
