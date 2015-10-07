@@ -4,14 +4,12 @@ eclipse:
 javadoc:
 	@gradle assemble javadoc
 
-build:
-	@gradle build
-
 run:
 	@gradle assemble run
 
 test:
 	@gradle assemble test
 
+.PHONY: clean
 clean:
 	@gradle clean cleanEclipse

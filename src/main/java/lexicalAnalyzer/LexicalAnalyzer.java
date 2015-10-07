@@ -30,8 +30,8 @@ public class LexicalAnalyzer {
 	 * @param uri Uri to file .bl
 	 * @throws FileNotFoundException if source is not found
 	 */
-	public LexicalAnalyzer(URI uri) throws FileNotFoundException {
-		scanner = new Scanner(new File(uri));
+	public LexicalAnalyzer(File file) throws FileNotFoundException {
+		scanner = new Scanner(file);
 		if (scanner.hasNextLine())
 			tokenScanner = new Scanner(scanner.nextLine());
 	}
@@ -88,16 +88,14 @@ public class LexicalAnalyzer {
 	}
 	
 	public static void main(String[] args) {
-		URI uri;
 		try {
-			uri = ClassLoader.getSystemResource("ShellSort.bl").toURI();
-			LexicalAnalyzer la = new LexicalAnalyzer(uri);
+			LexicalAnalyzer la = new LexicalAnalyzer(new File(args[0]));
 		
 			while(la.hasNext())	
 				System.out.println(la.nextToken());
 			
 			la.close();
-		} catch (URISyntaxException | FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}		
