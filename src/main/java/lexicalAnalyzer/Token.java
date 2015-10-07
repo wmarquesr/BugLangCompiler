@@ -1,21 +1,22 @@
 package lexicalAnalyzer;
 
-import enums.myEnum;
+import java.util.Comparator;
 
-public class Token {
+import enums.MyEnum;
 
-	private myEnum type;
+public class Token implements Comparable<Token> {
+
+	private MyEnum type;
 	private String value;
 	private int line;
-	private int arraySize = -1;
-	
-	public Token(myEnum type, String value, int line){
-		this.type = type;
-		this.value = value;
-		this.line  = line;
+	private int arraySize;
+	private int precedency;
+			
+	public Token(MyEnum type, String value, int line, int precedency){
+		this(type, value, -1, line, precedency);
 	}
 	
-	public Token(myEnum type, String value, int arraySize, int line){
+	public Token(MyEnum type, String value, int arraySize, int line, int precedency){
 		this.type = type;
 		this.value = value;
 		this.arraySize = arraySize;
@@ -32,7 +33,7 @@ public class Token {
 		
 	}
 
-	public myEnum getType() {
+	public MyEnum getType() {
 		return type;
 	}
 
@@ -46,5 +47,16 @@ public class Token {
 
 	public int getLine() {
 		return line;
+	}
+
+	@Override
+	public int compareTo(Token o) {
+		return o.precedency - this.precedency;
 	}	
+	
+	static public Comparator<Token> comparator = new Comparator<Token>() {
+		public int compare(Token t1, Token t2) {
+			return t1.compareTo(t2);
+		}
+	};
 }

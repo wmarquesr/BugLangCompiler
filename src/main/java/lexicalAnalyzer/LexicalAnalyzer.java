@@ -24,6 +24,9 @@ public class LexicalAnalyzer {
 	private List<String> currentFileLine;
 	private List<String> allFileLines;
 	private int line = 0;	
+	
+	final private String regex = AritOperator.regex() + "|" + Command.regex() + "|" + Literal.regex() + "|" +
+				LogicOperator.regex() + "|" + RelOperator.regex() + "|" + Symbol.regex() + "|" + Type.regex();
 
 	/**
 	 * Take the file .bl on the path, divided per line and put it on a list. 
@@ -62,148 +65,26 @@ public class LexicalAnalyzer {
 		return thisToken;
 
 	}
-
-	private Token searchToken(String tk){
-		Token thisToken;
-
-		switch (tk) {
-		case "int":
-			thisToken = new Token(Type.INTTYPE, Type.INTTYPE.getType(), line);
-			break;
-		case "float":
-			thisToken = new Token(Type.FLOATTYPE, Type.FLOATTYPE.getType(), line);
-			break;
-		case "string":
-			thisToken = new Token(Type.STRINGTYPE, Type.STRINGTYPE.getType(), line);
-			break;
-		case "+":
-			thisToken = new Token(AritOperator.ADDOPERATOR, AritOperator.ADDOPERATOR.getType(), line);
-			break;
-		case "-":
-			thisToken = new Token(AritOperator.SUBOPERATOR, AritOperator.SUBOPERATOR.getType(), line);
-			break;
-		case "*":
-			thisToken = new Token(AritOperator.MULTOPERATOR, AritOperator.MULTOPERATOR.getType(), line);
-			break;
-		case "/":
-			thisToken = new Token(AritOperator.DIVOPERATOR, AritOperator.DIVOPERATOR.getType(), line);
-			break;
-		case "¬":
-			thisToken = new Token(LogicOperator.NEGOPERATOR, LogicOperator.NEGOPERATOR.getType(), line);
-			break;
-		case "&":
-			thisToken = new Token(LogicOperator.ANDOPERATOR, LogicOperator.ANDOPERATOR.getType(), line);
-			break;
-		case "|":
-			thisToken = new Token(LogicOperator.OROPERATOR, LogicOperator.OROPERATOR.getType(), line);
-			break;
-		case "==":
-			thisToken = new Token(RelOperator.EQUALOPERATOR, RelOperator.EQUALOPERATOR.getType(), line);
-			break;
-		case "!=":
-			thisToken = new Token(RelOperator.NEQUALOPERATOR, RelOperator.NEQUALOPERATOR.getType(), line);
-			break;
-		case "<":
-			thisToken = new Token(RelOperator.LTOPERATOR, RelOperator.LTOPERATOR.getType(), line);
-			break;
-		case "<=":
-			thisToken = new Token(RelOperator.LTEOPERATOR, RelOperator.LTEOPERATOR.getType(), line);
-			break;
-		case ">":
-			thisToken = new Token(RelOperator.GTOPERATOR, RelOperator.GTOPERATOR.getType(), line);
-			break;
-		case ">=":
-			thisToken = new Token(RelOperator.GTEOPERATOR, RelOperator.GTEOPERATOR.getType(), line);
-			break;
-		case "if":
-			thisToken = new Token(Command.IFCOMMAND, Command.IFCOMMAND.getType(), line);
-			break;
-		case "while":
-			thisToken = new Token(Command.WHILECOMMAND, Command.WHILECOMMAND.getType(), line);
-			break;
-		case "for":
-			thisToken = new Token(Command.FORCOMMAND, Command.FORCOMMAND.getType(), line);
-			break;
-		case "return": {
-			thisToken = new Token(Command.RETURNCOMMAND, Command.RETURNCOMMAND.getType(), line);
-		} break;
-		case "(":
-			thisToken = new Token(Symbol.OPENPARENTESIS, Symbol.OPENPARENTESIS.getType(), line);
-			break;
-		case ")":
-			thisToken = new Token(Symbol.CLOSEPARENTESIS, Symbol.CLOSEPARENTESIS.getType(), line);
-			break;
-		case "{":
-			thisToken = new Token(Symbol.OPENBRACE, Symbol.OPENBRACE.getType(), line);
-			break;
-		case "}":
-			thisToken = new Token(Symbol.CLOSEBRACE, Symbol.CLOSEBRACE.getType(), line);
-			break;
-		case ";":
-			thisToken = new Token(Symbol.SEMICOLON, Symbol.SEMICOLON.getType(), line);
-			break;
-		case ":":
-			thisToken = new Token(Symbol.COLON, Symbol.COLON.getType(), line);
-			break;
-		case ".":
-			thisToken = new Token(Symbol.DOT, Symbol.DOT.getType(), line);
-			break;
-		case ",":
-			thisToken = new Token(Symbol.COMMA, Symbol.COMMA.getType(), line);
-			break;
-		case "\"":
-			thisToken = new Token(Symbol.QUOTATION, Symbol.QUOTATION.getType(), line);
-			break;
-		case "=":
-			thisToken = new Token(Symbol.ATROPERATOR, Symbol.ATROPERATOR.getType(), line);
-			break;
-		default:
-			if (isNumber(tk)) {
-				try {
-					if (tk.contains(".")) {
-						Float.parseFloat(tk);
-						thisToken = new Token(Literal.FLOATLITERAL, tk, line);
-						break;
-					} else {
-						Integer.parseInt(tk);
-						thisToken = new Token(Literal.INTLITERAL, tk, line);
-						break;
-					}
-				} catch(NumberFormatException e) {
-					thisToken = new Token(Type.ERROR, "Cannot iniziatize variable with number!", line);
-					break;
-				}
-			}
-
-			if (tk.contains(":")) {
-				thisToken = new Token(Type.IDENTIFIER, tk, Integer.parseInt(tk.substring(tk.indexOf(":")+1)), line);
-				break;
-			}
-			if (tk.startsWith("\"")) {
-				if (tk.endsWith("\"")) {
-					thisToken = new Token(Literal.STINGLITERAL, tk, line);
-					break;
-				} else {
-					thisToken = new Token(Type.ERROR, "Quotation is not closed!", line);
-					break;
-				}
-			}
-			thisToken = new Token(Type.IDENTIFIER, tk, line);
-			break;
-		}
-
-		return thisToken;
-	}
-
-	private boolean isNumber(String tk) {
-		if (tk.startsWith("1") || tk.startsWith("2") || tk.startsWith("3") 
-				|| tk.startsWith("4") || tk.startsWith("5") || tk.startsWith("6") 
-				|| tk.startsWith("7") || tk.startsWith("8") || tk.startsWith("9")
-				|| tk.startsWith("0")) {
-			return true;
-		}
-
-		return false;
+	
+	private Token searchToken(String lex) {
+		List<Token> list = new ArrayList<Token>();
+		Token token = AritOperator.SUBOPERATOR.getToken(line);
+		if (!lex.matches(regex))
+			return Type.ERROR.getToken(line);
+		
+		AritOperator.checkRegex(list, lex, line);
+		Command.checkRegex(list, lex, line);
+		Literal.checkRegex(list, lex, line);
+		LogicOperator.checkRegex(list, lex, line);
+		RelOperator.checkRegex(list, lex, line);
+		Symbol.checkRegex(list, lex, line);
+		Type.checkRegex(list, lex, line);
+		
+		if (list.size() > 1) 
+			list.sort(Token.comparator);
+		
+		token = list.get(0);
+		return token;
 	}
 
 	private List<String> convertArrayToList(String[] s){

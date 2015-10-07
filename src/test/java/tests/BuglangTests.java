@@ -51,7 +51,7 @@ public class BuglangTests {
 				assertEquals(line, la.nextToken().toString());
 				line = res.readLine();
 			}
-			
+						
 			res.close();
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
