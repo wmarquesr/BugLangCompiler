@@ -94,7 +94,7 @@ public class LexicalAnalyzer {
 			LexicalAnalyzer la = new LexicalAnalyzer(uri);
 		
 			while(la.hasNext())	
-				System.out.println(la.nextToken().toString());
+				System.out.println(la.nextToken());
 			
 			la.close();
 		} catch (URISyntaxException | FileNotFoundException e) {
