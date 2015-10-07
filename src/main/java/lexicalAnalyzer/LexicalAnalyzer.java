@@ -1,13 +1,12 @@
 package lexicalAnalyzer;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,27 +21,20 @@ import enums.Type;
 public class LexicalAnalyzer {
 
 	private List<String> currentFileLine;
-	private List<String> allFileLines;
 	private int line = 0;	
+	private Scanner scanner;
 	
 	final private String regex = AritOperator.regex() + "|" + Command.regex() + "|" + Literal.regex() + "|" +
 				LogicOperator.regex() + "|" + RelOperator.regex() + "|" + Symbol.regex() + "|" + Type.regex();
 
 	/**
-	 * Take the file .bl on the path, divided per line and put it on a list. 
-	 * @param path Path to file .el
+	 * Take the file .bl on the uri.
+	 * @param uri Uri to file .bl
+	 * @throws FileNotFoundException if source is not found
 	 */
-	public LexicalAnalyzer(File path) {
+	public LexicalAnalyzer(URI uri) throws FileNotFoundException {
 		this.currentFileLine = new ArrayList<String>();
-		this.allFileLines = new ArrayList<String>();
-
-		List<String> lines;
-		try {
-			lines = Files.readAllLines(path.toPath(), StandardCharsets.UTF_8);
-			allFileLines = convertListToLinkedList(lines);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		scanner = new Scanner(new File(uri));
 	}
 
 	/**
@@ -50,19 +42,18 @@ public class LexicalAnalyzer {
 	 * @return The next token of the list
 	 */
 	public Token nextToken() {		
-		if (allFileLines.size() == 0)
+		if (!scanner.hasNextLine())
 			return null;
 		
 		if(currentFileLine.size() == 0){
-			currentFileLine = convertArrayToList(removeWhitespace(allFileLines.get(0)).split("\\s"));
-			allFileLines.remove(0);
+			currentFileLine = convertArrayToList(removeWhitespace(scanner.nextLine()).split("\\s"));
 			line++;
 		}
 
-		Token thisToken = searchToken(currentFileLine.get(0));
+		Token token = searchToken(currentFileLine.get(0));
 		currentFileLine.remove(0);
-
-		return thisToken;
+		
+		return token;
 
 	}
 	
@@ -97,22 +88,12 @@ public class LexicalAnalyzer {
 		return news;
 	}
 
-	private List<String> convertListToLinkedList(List<String> lines) {
-		List<String> news = new ArrayList<String>();
-
-		for (int i = 0; i < lines.size(); i++) {
-			news.add(lines.get(i));
-		}
-
-		return news;
-	}
-
 	/**
 	 * 
 	 * @return The quantity of lines on the file .el
 	 */
-	public int size() {
-		return allFileLines.size();
+	public boolean hasNext() {
+		return scanner.hasNext();
 	}
 	
 	private String removeWhitespace(String s) {
@@ -121,18 +102,25 @@ public class LexicalAnalyzer {
 		return rm.replaceAll(" ");
 	}
 	
-public static void main(String[] args) {
-	URI uri;
-	try {
-		uri = ClassLoader.getSystemResource("ShellSort.bl").toURI();
-		LexicalAnalyzer la = new LexicalAnalyzer(new File(uri));
-		
-		while(la.size() != 0)	
-			System.out.println(la.nextToken().toString());
-	} catch (URISyntaxException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	/**
+	 * Close the lexical analyzer.
+	 */
+	public void close() {
+		scanner.close();
 	}
+	
+	public static void main(String[] args) {
+		URI uri;
+		try {
+			uri = ClassLoader.getSystemResource("ShellSort.bl").toURI();
+			LexicalAnalyzer la = new LexicalAnalyzer(uri);
 		
-	}	
+			while(la.hasNext())	
+				System.out.println(la.nextToken().toString());
+			
+			la.close();
+		} catch (URISyntaxException | FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}		
 }
