@@ -10,7 +10,7 @@ public enum Type implements MyEnum {
 	FLOATTYPE("float", "float", 1), 
 	STRINGTYPE("string", "string", 1),
 	ERROR("error", "", 1),
-	IDENTIFIER("", "[a-zA-Z]+\\w*|[a-zA-Z]+:\\d+", 5);
+	IDENTIFIER("", "[a-zA-Z]+\\w*(:\\d+)?", 5);
 
 	private String type;
 	private String regex;
@@ -46,7 +46,7 @@ public enum Type implements MyEnum {
 		return new Token(this, type, line, precedency);
 	}
 	
-	public Token getToken(String lex, int line, int size) {
-		return new Token(this, lex, size, line, precedency);
+	public Token getToken(String value, int line, int size) {
+		return new Token(this, value, size, line, precedency);
 	}
 }

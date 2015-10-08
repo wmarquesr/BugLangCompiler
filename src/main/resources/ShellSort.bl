@@ -1,6 +1,6 @@
-int shellSort ( int vet:100 , int size ) 
+int shellSort( int vet:100, int size )
 {
-    int i ;
+    int i;
     int j ;
     int value ;
     int gap = 1 ;

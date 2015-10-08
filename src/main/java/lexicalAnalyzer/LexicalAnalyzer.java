@@ -1,9 +1,10 @@
 package lexicalAnalyzer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -19,21 +20,22 @@ import enums.Type;
 public class LexicalAnalyzer {
 
 	private int line = 1;	
-	private Scanner scanner;
-	private Scanner tokenScanner;
-	
+	private Scanner scanner = null;
+	private String buffer = "";
+	private Reader reader = null;
 	final private String regex = AritOperator.regex() + "|" + Command.regex() + "|" + Literal.regex() + "|" +
 				LogicOperator.regex() + "|" + RelOperator.regex() + "|" + Symbol.regex() + "|" + Type.regex();
 
 	/**
 	 * Take the file .bl on the uri.
 	 * @param uri Uri to file .bl
-	 * @throws FileNotFoundException if source is not found
+	 * @throws Exception 
 	 */
-	public LexicalAnalyzer(File file) throws FileNotFoundException {
-		scanner = new Scanner(file);
-		if (scanner.hasNextLine())
-			tokenScanner = new Scanner(scanner.nextLine());
+	public LexicalAnalyzer(URI uri) throws Exception {
+		scanner = new Scanner(new File(uri));
+		if (!scanner.hasNextLine())
+			throw new Exception("empty file");
+		reader = new StringReader(scanner.nextLine());
 	}
 
 	/**
@@ -41,21 +43,91 @@ public class LexicalAnalyzer {
 	 * @return The next token of the list
 	 */
 	public Token nextToken() {
-		if(!tokenScanner.hasNext()){
-			tokenScanner = new Scanner(scanner.nextLine());
-			++line;
-		}
+		int i;
+		try {
+			while(scanner.hasNext())  {
+				if (buffer.length() > 0) {
+					if (buffer.matches(regex)) {
+						Token token = searchToken(buffer);
+						buffer = "";
+						return token;
+					} else
+						return Type.ERROR.getToken(line);						
+				}
+					
+				if ((i = reader.read()) == -1) {
+					reader = new StringReader(scanner.nextLine());
+					++line;
+					i = reader.read();
+				}
+				
+				while(i != -1) {
+					String c = String.valueOf(((char) i));
+					
+					if (c.matches("\\s")) {
+						if (buffer.length() > 0) {
+							Token token = searchToken(buffer);
+							buffer = "";
+							return token;
+						} else {
+							i = reader.read();
+							continue;
+						}
+					}  else if (c.matches(":")) {
+						if (buffer.length() > 0) {
+							if (buffer.matches("[a-zA-Z]+\\w*(:\\d+)?"))
+								buffer += c;
+							else
+								return Type.ERROR.getToken(line);
+						} else
+							buffer = c;
+					} else if (c.compareTo("\"") == 0) {
+						if (buffer.length() > 0) {
+							Token token = searchToken(buffer);
+							buffer = c;
+							return token;
+						} 
+						
+						buffer = c;
+						if (!inApas())
+							return Type.ERROR.getToken("String doesn't have \" in the end!", line, -1);							
+						
+					} else if (c.matches(regex)) {
+					
+						if (buffer.length() > 0) {
+							if ((buffer + c).matches(regex))
+								buffer += c;
+							else {
+								if (buffer.compareTo("\"") == 0) {
+									buffer = c;
+									return Type.ERROR.getToken(line);
+								}
+								
+								Token token = searchToken(buffer);
+								buffer = c;
+								return token;
+							}
+						} else {
+							if (c.matches(regex))
+								buffer += c;
+							else
+								return Type.ERROR.getToken(c + " doesn't exist on language", line, -1);
+						}
+					}
+					
+					i = reader.read();					
+				}
 
-		Token token = searchToken(tokenScanner.next());
-		
-		return token;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return (buffer.length() > 0) ? searchToken(buffer) : Type.ERROR.getToken("Surprise error!", line, -1);
 	}
 	
 	private Token searchToken(String lex) {
 		List<Token> list = new ArrayList<Token>();
-		Token token = AritOperator.SUBOPERATOR.getToken(line);
-		if (!lex.matches(regex))
-			return Type.ERROR.getToken(line);
 		
 		AritOperator.checkRegex(list, lex, line);
 		Command.checkRegex(list, lex, line);
@@ -68,8 +140,7 @@ public class LexicalAnalyzer {
 		if (list.size() > 1) 
 			list.sort(Token.comparator);
 		
-		token = list.get(0);
-		return token;
+		return list.get(0);
 	}
 
 	/**
@@ -77,7 +148,7 @@ public class LexicalAnalyzer {
 	 * @return true if there is tokens remaining to be consumed.
 	 */
 	public boolean hasNext() {
-		return scanner.hasNext();
+		return scanner.hasNextLine();
 	}
 	
 	/**
@@ -87,16 +158,38 @@ public class LexicalAnalyzer {
 		scanner.close();
 	}
 	
-	public static void main(String[] args) {
+	private boolean inApas() {
 		try {
-			LexicalAnalyzer la = new LexicalAnalyzer(new File(args[0]));
-		
-			while(la.hasNext())	
-				System.out.println(la.nextToken());
-			
-			la.close();
-		} catch (FileNotFoundException e) {
+			int i;
+			while((i = reader.read()) != -1) {
+				String c = String.valueOf(((char) i));
+				
+				if (c.compareTo("\"") == 0) {
+					buffer += c;
+					return true;
+				}
+				buffer += c;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		buffer = "";
+		return false;
+	}
+	
+	public static void main(String[] args) {
+		URI uri;
+ 		try {
+			uri = ClassLoader.getSystemResource("ShellSort.bl").toURI();
+			LexicalAnalyzer la = new LexicalAnalyzer(uri);
+ 		
+ 			while(la.hasNext())	
+ 				System.out.println(la.nextToken());
+ 			
+ 			la.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
 	}		
 }
