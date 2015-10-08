@@ -16,26 +16,6 @@ repositories {
     mavenCentral()
 }
 
-sourceSets {
-    main {
-        java {
-            srcDir "src/main/java"
-        }
-        resources {
-                  srcDir "src/main/res"
-        }
-    }
-
-    test {
-         java {
-              srcDir "src/test/java"
-         }
-         resources {
-                   srcDir "src/test/res"
-         }
-    }
-}
-
 dependencies {
     testCompile "junit:junit:4.12"
 }

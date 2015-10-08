@@ -33,6 +33,9 @@ public class BuglangTests {
 			res.close();
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -54,6 +57,9 @@ public class BuglangTests {
 			la.close();
 			res.close();
 		} catch (URISyntaxException | IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
