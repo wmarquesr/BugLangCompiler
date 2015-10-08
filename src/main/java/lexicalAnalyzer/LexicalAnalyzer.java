@@ -46,10 +46,20 @@ public class LexicalAnalyzer {
 	public Token nextToken() {
 		int i;
 		try {
-			while(scanner.hasNext()) {
+			while(scanner.hasNext())  {
+				if (buffer.length() > 0) {
+					if (buffer.matches(regex)) {
+						Token token = searchToken(buffer);
+						buffer = "";
+						return token;
+					} else
+						return Type.ERROR.getToken(line);						
+				}
+					
 				if ((i = reader.read()) == -1) {
 					reader = new StringReader(scanner.nextLine());
 					++line;
+					i = reader.read();
 				}
 				
 				while(i != -1) {
@@ -81,7 +91,7 @@ public class LexicalAnalyzer {
 						
 						buffer = c;
 						if (!inApas())
-							return Type.ERROR.getToken(line);							
+							return Type.ERROR.getToken("String doesn't have \" in the end!", line, -1);							
 						
 					} else if (c.matches(regex)) {
 					
@@ -102,7 +112,7 @@ public class LexicalAnalyzer {
 							if (c.matches(regex))
 								buffer += c;
 							else
-								return Type.ERROR.getToken(c + " doesn't", line, -1);
+								return Type.ERROR.getToken(c + " doesn't exist on language", line, -1);
 						}
 					}
 //				if (!c.matches("\\s")) {
@@ -136,7 +146,7 @@ public class LexicalAnalyzer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return (buffer.length() > 0) ? searchToken(buffer) : Type.ERROR.getToken("Surprise error!", line, -1);
 	}
 	
 	private Token searchToken(String lex) {
@@ -161,7 +171,7 @@ public class LexicalAnalyzer {
 	 * @return true if there is tokens remaining to be consumed.
 	 */
 	public boolean hasNext() {
-		return scanner.hasNext();
+		return scanner.hasNextLine();
 	}
 	
 	/**
