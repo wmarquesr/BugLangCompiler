@@ -40,12 +40,12 @@ public class BuglangTests {
 	}
 	
 	@Test
-	public void testSample1() {
+	public void testEspacos() {
 		try {
-			URI source = ClassLoader.getSystemResource("sample1.bl").toURI();
+			URI source = ClassLoader.getSystemResource("espacos.bl").toURI();
 			LexicalAnalyzer la = new LexicalAnalyzer(source);
 			
-			URI sourceRes = ClassLoader.getSystemResource("sample1").toURI();
+			URI sourceRes = ClassLoader.getSystemResource("espacosresult").toURI();
 			BufferedReader res = new BufferedReader(new FileReader(sourceRes.getPath()));
 			
 			String line = res.readLine();
@@ -58,6 +58,47 @@ public class BuglangTests {
 			res.close();
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testJuntos() {
+		URI source;
+		try {
+			source = ClassLoader.getSystemResource("juntos.bl").toURI();
+			LexicalAnalyzer la = new LexicalAnalyzer(source);
+		
+			URI sourceRes = ClassLoader.getSystemResource("juntosresult").toURI();
+			BufferedReader res = new BufferedReader(new FileReader(sourceRes.getPath()));
+			
+			String line = res.readLine();
+			while (la.hasNext()) {
+				assertEquals(line, la.nextToken().toString());
+				line = res.readLine();
+			}
+			
+			res.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testBothShell() {
+		try {
+			URI source = ClassLoader.getSystemResource("ShellSort.bl").toURI();
+			LexicalAnalyzer la = new LexicalAnalyzer(source);
+		
+			URI source2 = ClassLoader.getSystemResource("ShellSortJunto.bl").toURI();
+			LexicalAnalyzer la2 = new LexicalAnalyzer(source2);			
+			
+			while (la.hasNext())
+				assertEquals(la.nextToken().toString(), la2.nextToken().toString());
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
