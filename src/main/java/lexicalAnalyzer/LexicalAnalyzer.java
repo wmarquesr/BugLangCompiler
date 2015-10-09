@@ -44,7 +44,7 @@ public class LexicalAnalyzer {
 	 * @return The next token of the list
 	 */
 	public Token nextToken() {
-		if (!buffer.isEmpty() && !buffer.matches("[a-zA-Z]+\\w*(:\\d+)?" + "|<|>|=|!")) {
+		if (!buffer.isEmpty() && !buffer.matches("[a-zA-Z]+\\w*(:\\d+)?" + "|<|>|=|!|\"")) {
 			return searchToken(buffer);
 		}
 		
@@ -71,14 +71,14 @@ public class LexicalAnalyzer {
 				
 				buffer = c;
 				continue;
-			} else if (c.compareTo("\"") == 0) {
-				if (!buffer.isEmpty()) {
+			} else if ((c.compareTo("\"") == 0) || buffer.matches("\"")) {
+				if (!buffer.isEmpty() && !buffer.matches("\"")) {
 					Token token = searchToken(buffer);
 					buffer = c;
 					return token;
 				}
 				
-				buffer = c;
+				buffer += c;
 				inApas();
 				return searchToken(buffer);
 			} else if (c.matches(regex)) {
@@ -143,7 +143,7 @@ public class LexicalAnalyzer {
 	 * @return true if there is tokens remaining to be consumed.
 	 */
 	public boolean hasNext() {
-		return scanner.hasNextLine() || (buffer.length() > 0) || !reader.isEmpty();
+		return scanner.hasNextLine() || !buffer.isEmpty() || !reader.isEmpty();
 	}
 
 	/**
