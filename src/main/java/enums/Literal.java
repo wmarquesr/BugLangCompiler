@@ -28,7 +28,7 @@ public enum Literal implements MyEnum {
 		if (lex.matches(FLOATLITERAL.regex))
 			list.add(FLOATLITERAL.getToken(lex, line));
 		if (lex.matches(STRINGLITERAL.regex))
-			list.add(STRINGLITERAL.getToken(lex, line));
+			list.add(STRINGLITERAL.getToken(lex.substring(1, lex.length() - 1), line));
 	}
 	
 	@Override
